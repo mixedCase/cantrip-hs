@@ -1,0 +1,35 @@
+name: Pages
+
+# Publishes the API reference (`nix build .#docs`) to GitHub Pages. Runs by hand
+# only, until the site is ready: Settings > Pages > Source: GitHub Actions, then
+# Actions > Pages > Run workflow. To publish on every push to master, add:
+#   push:
+#     branches: [master]
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: cachix/install-nix-action@v31
+      - run: nix build .#docs -o result
+      - run: cp -rL --no-preserve=mode result/. _site
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v5
