@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE TupleSections #-}
@@ -18,6 +19,7 @@ import Data.List (isPrefixOf)
 import Data.Maybe (isJust, isNothing)
 import qualified Data.Text as T
 import Data.Time.Clock (addUTCTime, diffUTCTime, getCurrentTime)
+import GHC.Generics (Generic)
 import Network.Socket
 import Network.Socket.ByteString (recv, sendAll)
 import System.Directory (
@@ -42,6 +44,9 @@ import System.Posix.Files (fileMode, getFileStatus)
 import qualified System.Process.Typed as P
 import System.Timeout (timeout)
 
+data Sheet = Sheet {name :: Text, hp :: Int} deriving (Eq, Show, Generic)
+
+instance FromJSON Sheet
 main :: IO ()
 main = do
     args <- getArgs
@@ -101,6 +106,18 @@ tests = do
     atomicWriteFile target "hello" 0o600
     check "atomicWriteFile writes bytes" . (== "hello") =<< BS.readFile path
     removeFile path
+    let yamlPath = target <> ".yaml"
+    writeText yamlPath "name: Halloran\nhp: 42\ncountry: NO\n"
+    sheet <- readYamlFile yamlPath
+    check "readYamlFile uses Aeson values and JSON accessors" (str "name" sheet == Just "Halloran" && int "hp" sheet == Just 42)
+    check "YAML 1.1 reads unquoted NO as false" (at ["country"] sheet == Just (Bool False))
+    typed <- readYamlFileAs yamlPath
+    check "readYamlFileAs decodes FromJSON records" (typed == Sheet "Halloran" 42)
+    writeText yamlPath "name: Halloran\nhp: [\n"
+    failsWith "readYamlFile reports the file and parse location" (\reason -> yamlPath `T.isInfixOf` reason && "line " `T.isInfixOf` reason && "column " `T.isInfixOf` reason) (readYamlFile yamlPath)
+    writeText yamlPath "name: first\nname: second\nhp: 42\n"
+    failsWith "readYamlFile rejects duplicate keys" (\reason -> yamlPath `T.isInfixOf` reason && "DuplicateKey" `T.isInfixOf` reason) (readYamlFile yamlPath)
+    removeFile (T.unpack yamlPath)
     let lock = path ++ ".lock"
     withLockDir (T.pack lock) (return ())
     check "withLockDir removes lock" . not =<< doesDirectoryExist lock

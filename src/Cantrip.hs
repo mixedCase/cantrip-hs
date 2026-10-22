@@ -2,14 +2,15 @@
 
 {- | Umbrella: the single import for scripts. @import Cantrip@
 brings the modules below plus the types and helpers every script needs:
-'Text', 'ByteString', JSON values and combinators (decoding ones come
-from "Cantrip.Json"), @Maybe@ plumbing,
+'Text', 'ByteString', JSON and YAML values, and @Maybe@ plumbing; JSON
+combinators come from "Cantrip.Json".
 @when@/@unless@/@forM_@.
 -}
 module Cantrip (
     module Cantrip.Core,
     module Cantrip.Cli,
     module Cantrip.Json,
+    module Cantrip.Yaml,
     module Cantrip.Encoding,
     module Cantrip.Http,
     module Cantrip.Shell,
@@ -40,6 +41,7 @@ import Cantrip.Http
 import Cantrip.Json
 import Cantrip.Shell
 import Cantrip.Time
+import Cantrip.Yaml
 import Control.Monad (forM_, unless, when)
 import Data.Aeson (Value (..), object, toJSON)
 import Data.ByteString (ByteString)

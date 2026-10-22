@@ -557,6 +557,9 @@ main = jsonScript $ \argv -> do
   headers.
 - `modifyJsonFile` locks the file, reads it, applies your change, and writes it
   back atomically with mode `0o600` (owner read and write only).
+- `readYamlFile` and `readYamlFileAs` read YAML into the same `Value` or record.
+  Duplicate keys fail. YAML 1.1 rules apply, so an unquoted `NO` reads as
+  `False`.
 
 ## What's in it
 
@@ -567,6 +570,7 @@ main = jsonScript $ \argv -> do
 | `Cantrip.Encoding` | Hex, base64 and UTF-8: [Encoding](#encoding)                  |
 | `Cantrip.Cli`      | `script`, `jsonScript` and [arguments](#arguments)            |
 | `Cantrip.Json`     | [JSON](#json-and-http) files, safe field access, JWT claims   |
+| `Cantrip.Yaml`     | YAML files, read as the same values and records as JSON       |
 | `Cantrip.Http`     | HTTPS requests and responses: [JSON and HTTP](#json-and-http) |
 | `Cantrip.Core`     | `ScriptError`, `failWith`, `expect`, `envOr`, `nowMs`         |
 | `Cantrip.Time`     | ISO 8601 timestamps as epoch milliseconds                     |

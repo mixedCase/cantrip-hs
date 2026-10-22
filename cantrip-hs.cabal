@@ -3,7 +3,7 @@ name:               cantrip-hs
 version:            0.1.0
 synopsis:           Batteries-included Haskell scripting, Nix-native
 description:
-  A small standard library for everyday Haskell scripts: JSON,
+  A small standard library for everyday Haskell scripts: JSON, YAML,
   HTTP, running commands, atomic file writes, locks, CLI entry points. Single
   @import Cantrip@. POSIX only.
 license:            BSD-3-Clause
@@ -27,6 +27,7 @@ library
     Cantrip.Core
     Cantrip.Cli
     Cantrip.Json
+    Cantrip.Yaml
     Cantrip.Encoding
     Cantrip.Http
     Cantrip.Shell
@@ -55,6 +56,7 @@ library
     time >= 1.12 && < 2,
     typed-process >= 0.2.11 && < 0.3,
     unix >= 2.8 && < 3,
+    yaml >= 0.11.8 && < 0.12,
     stm >= 2.5 && < 3,
     cantrip-hs:syntax
 

@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file. The format
 is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this
 project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- `Cantrip.Yaml`: `readYamlFile` and `readYamlFileAs`, using Aeson values and
+  `FromJSON` decoding; duplicate mapping keys fail loudly.
+- New dependency: `yaml` (BSD-3-Clause, libyaml). It follows YAML 1.1, so
+  unquoted `NO` reads as `False`.
+
 ## [0.1.0] - 2026-10-21
 
 Initial release.
